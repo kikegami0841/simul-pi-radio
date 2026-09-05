@@ -11,9 +11,9 @@
  sudo apt remove cups-common -y
  sudo apt remove firefox -y
  sudo apt autoremove -y
-#sudo apt update
-#sudo apt upgrade -y
-#sudo apt install git -y
+sudo apt update
+sudo apt upgrade -y
+sudo apt install git -y
 
 #=====
 #=====Liteグレードを選択したら、pipe wireが入っていないので以下を追加
@@ -68,6 +68,15 @@ if [ $? -eq "0" ]; then
   echo "Exist"
 else
   sudo adduser `whoami` bluetooth
+fi
+
+if [ -e "/etc/sudoers.d/020_iptables" ]; then
+  echo "020_iptables Exist"
+else
+sudo /usr/bin/bash -c "cat <<EOF >> /etc/sudoers.d/020_iptables
+ `whoami` ALL=(ALL) NOPASSWD: /usr/sbin/iptables
+EOF
+"
 fi
 
 # pw-top で OutputがAlsa関連(pcm5101a)に出ているか確認

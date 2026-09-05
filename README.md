@@ -1,15 +1,16 @@
 ﻿# Simulradio (サイマルラジオ受信機)
 
-２つの受信エンジンを使ったラジオ受信機の実装例です  
+２つの受信エンジンを使ったラジオ受信機の実装例(Sample)です  
 | ツール | 対応サービス |
 | ---- | ---- |
 | radish-play.sh | [NHKラジオ らじる★らじる](https://www.nhk.or.jp/radio/) / [radiko](http://radiko.jp/) / [ListenRadio](http://listenradio.jp/) |
 | rec_wss.py | [JCBA](https://www.jcbasimul.com/), [FM++](https://fmplapla.com/) |
 
 - この2つで、日本中のラジオ局のサイマル放送を網羅している(と思います)  
-これらの好きなものを node.js を使ってWebServerを構築して、スマホやPCを使って選曲、音量調整できる物
-を作ってみました。raspberry pi zero 2 W を使って、DAC+パワーアンプでスピーカーから鳴らします
-システムはユーザー領域で動いています
+- これらの好きなものを node.js を使ってWebServerを構築して、スマホやPCを使って選曲、音量調整できる物
+を作ってみました。  
+- raspberry pi zero 2 W を使って、DAC+パワーアンプでスピーカーから鳴らします  
+- システムはユーザー領域で動いています
 
 ## raspberry pi zero 2W 使うことにしたのか
 - ラジオのサイマル放送は古いスマホ＋アンプでもいいが、
@@ -33,27 +34,27 @@ Raspberry Pi OSの起動が遅いのでのちにZero 2 Wに変更
 - 起動時にWi-Fiに接続できるようRaspi Imagerで設定してください
 - 起動時にSSHでログインできるようRaspi Imagerで設定してください
 - Raspi Imageで設定したHostnameは、Network設定に依っては http://[hostname].local/panel でアクセス可能(ダイナミックDNS)  
- そうでなければ、Wi-Fi環境のDHCPで ip address を固定化してアクセスする http://固定アドレス/panel でアクセス
-- ターミナル コマンドプロンプト や wsl Terminal などを用意
-- ファイル転送 WinSCP などファイル転送ツールを用意
-- PCからSSH（Secure Shell）を使ってRaspberry Pi Zero 2 Wにログインし、CUI（コマンドライン）に操作ができる事
+ そうでなければ、Wi-Fi環境のDHCPで ip address を固定化してアクセスする http://固定アドレス/panel でアクセス  
+ 私は、Wifiルータにraspberry piのMACアドレスとIPアドレスを紐づけて登録しています  
+- ターミナル コマンドプロンプト や wsl Terminal などを用意  
+- ファイル転送 WinSCP などファイル転送ツールを用意  
+- PCからSSH（Secure Shell）を使ってRaspberry Pi Zero 2 Wにログインし、CUI（コマンドライン）に操作ができる事  
 
 ## インストールするもの
-- SSHで Raspberry Oi Zero 2 W にログインした後、最初にする仕事は、git wgetのインストールです
+- SSHで Raspberry Pi Zero 2 W にログインした後、最初にする仕事は、wget での installer.sh の取得です  
 以下のコマンドを実行してください
 ```
-sudo apt update 
-sudo apt upgrade -y 
-sudo apt install git -y  
-
 wget https://raw.githubusercontent.com/kikegami0841/simul-pi-radio/refs/heads/main/installer.sh -P .
 ```
 
 - スクリプト言語で動いている為、インストールするパッケージ、修正する設定ファイルが多い為、
 install.sh にまとめているので、確認してほしい
 - 大きいものとしては、  
- Audio ffmpeg, pipewire, pluseaudio, wget, curl, python3  
- Webサーバー node.js
+
+| サービス |  |
+| ---- | ---- |  
+| Audio | ffmpeg, pipewire, pluseaudio, wget, curl, python3  |  
+| Webサーバー | node.js  |  
 
 ## ディレクトリ構成
 ```
@@ -63,7 +64,6 @@ install.sh にまとめているので、確認してほしい
     │  ├─dotconfig_pipewire/                     #~/.config/pipewire/以下の設定  
     │  ├─dotconfig_systemd_user/                 #~/.config/systemd/user/以下の設定 
     │  ├─dotconfig_wireplumber/                  #~/.config/wireplumber/以下の設定
-    │  └─etc_NetworkManager_system-connections/  #/etc/NetworkManager/system-connections/以下の設定
     ├─node_modules/                               # nodejsの設定ファイル ＊
     ├─public/                                     # html ico ファイル
     │  ├─images/                                 # html image
@@ -75,15 +75,16 @@ install.sh にまとめているので、確認してほしい
 ## インストール
 - 「インストールするもの」で取得した install.sh を実行します
 ```
-sh ./install.sh > log.txt 2>&1
+sh ./install.sh
 ```
 
-## 選曲
+## 操作
+### 　選曲
 - スマホやPCから http://[RaspiImagerでつけたhostname].local/panel/ または http://固定アドレス/panel でアクセスする
 - ラジオボタンで選曲、スライダーで音量調節できます
 - 起動してすぐに決めたラジオ局が鳴ります。後述
 
-## 音量
+### 　音量
 - 音量は ALSA を使ってるため 0..100 で設定します
 - 起動してすぐに決めた音量で鳴ります。後述
 
@@ -91,10 +92,12 @@ sh ./install.sh > log.txt 2>&1
 - Radiko Premiumの会員登録をしていない(アカウントが無い)場合はエリアフリーにならないですが  
 自分には必要が無い為、アカウント/パスワードを入力できるようなインターフェースを用意していません  
 (改造すれば対応できます) 詳しくは radish-play.sh の情報を参照してください  
-- 古いOSバージョン(Legacy)はAudioの構成が違い過ぎるので動かないと思います
+- 古いOSバージョン(Legacy 例えば BookWorm)はAudioの構成が違い過ぎるので対象外です  
+- Audio 以外のところでは、当初はBookWormで開発していたので動作する可能性はあります  
 
 ## 終了手順
-- rootfs ROM化 設定をしているので、電源を落とすだけ
+- rootfs ROM化 設定をしているので、電源を落とすだけ  
+- rootfs ROM化しない場合は、ssh でログインして sudo poweroff した方が、MicroSDにダメージを与えないと思います  
 
 ## カスタマイズ
 - カスタマイズ前後で、rootfs ROM化のdisable/enable を行ってください詳しくは、installler.shファイルの最後の10行程度を参考に
@@ -102,12 +105,25 @@ sh ./install.sh > log.txt 2>&1
 ~/src/simulradio/CmdScript/に、対応するリスト全てのバッチを用意しています  
 自分の地域に合った放送局に入れ替えてみてください
 - 入れ替える所は2か所  
-	~/SimulRadio/views/panel.ejs
-		Tableの要素(Station id)の追加/編集
-	~/SimulRadio/routes/panel.js
-		Case文の条件(Station id)の追加/編集
+
+| 場所 | 修正内容 |
+| ---- | ---- |
+| ~/SimulRadio/views/panel.ejs | Tableの要素(Station id)の追加/編集 |  
+| ~/SimulRadio/routes/panel.js | Case文の条件(Station id)の追加/編集 |
+
 - 起動時の選曲、音量の編集
- ~/SimulRadio/routes/panel.js : def_station, def_volume
+
+| 場所 | 修正内容 |
+| ---- | ---- |
+|  ~/SimulRadio/routes/panel.js | def_station, def_volume | 
 - 全部のラジオ局を選曲するインターフェースは複雑なので非対応です
 
-
+## 新しいラジオ局を追加する
+- /opt/simulradio/bin/SimulRadio_StationList.xlsx の使う  
+- simulradioのラジオ局のPlayer, PlayerのType, StationID, 漢字の名前, StationIDのニックネームを管理しています  
+- 新しくラジオ局を追加する場合は、新しい行に全部のパラメータを記入し、以下のコマンドを実行して、[StationID].shを構築してください  
+- その後、カスタマイズの手順でラジオ局をWebサーバーに登録する
+```
+ cd /opt/simulradio/bin
+ ./SimulRadio_StationList.py
+```
