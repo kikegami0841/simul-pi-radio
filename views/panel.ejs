@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ja">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Simul Pi-Radio</title>
+</head>
+<style type="text/css">
+	h1 {
+	font-family: "Ink free" ;
+	font-style: italic;
+	font-size: 40px;
+	font-weight:bold;
+	}
+	h2 {
+	font-size: 20px;
+	}
+	body {
+	background-image: url("/panel/sshairline.png");
+	background-repeat:no-repeat;
+	background-size: 400px auto;
+	}
+        input[type="radio"] {
+          accent-color: royalblue;
+/*
+          inline-size: 1.0rem;
+          block-size: 1.0rem;
+*/
+        }
+
+        .btn-square {
+          display: inline-block;
+          padding: 5px 20px;
+          text-decoration: none;
+          background-color: silver;
+          color: lightgreen;
+          border-bottom: solid 6px rgb(50,50,50);
+          border-radius: 10px;
+        }
+        .btn-square:active {
+          -webkit-transform: translateY(4px);
+          transform: translateY(4px);
+          border-bottom: none;
+        }
+        .slider {
+          -webkit-appearance: none;/* CSS適用のおまじない */
+          appearance: none;/* CSS適用のおまじない */
+          background: black;/* バーの色 */
+          cursor: pointer;/* 重ねた時のカーソルデザイン */
+          border-radius: 4px;/* 端を丸める */
+          width: 280px;
+          height: 6px
+        }
+
+        /* ツマミ：Chrome, Safari, Edge用 */
+        .slider::-webkit-slider-thumb {
+          -webkit-appearance: none;/* CSS適用のおまじない */
+          background: silver;/* ツマミの色 */
+          border-radius: 4px;/* 端を丸める */
+          width: 24px;
+          height: 48px;
+          box-shadow: 0 6px 6px rgb(22, 22, 22);
+        }
+        .slider:active::-webkit-slider-thumb {
+          background: lightgray;/* つかんだ時のツマミの色 */
+        }
+
+        /* ツマミ：Firefox用 */
+        .slider::-moz-range-thumb {
+          background: silver;/* ツマミの色 */
+          border-radius: 4px;/* 端を丸める */
+          width: 24px;
+          height: 48px;
+          border: none;
+          box-shadow: 0 6px 6px rgb(22, 22, 22);
+        }
+        .slider:active::-moz-range-thumb {
+          background: lightgray;/* つかんだ時のツマミの色 */
+        }
+
+</style>
+<body>
+  <p>
+     <H1 style="margin:0;">　　Simul Pi-Radio</H1>
+     <table width="335" border="0">
+        <th align="left" height="40" width="150"><H2 style="margin:0;">　Station</H2></th>
+      <tr><td>
+        <input type="radio" name="station" value="nhk-tokyo-fm" <% if (def_station === "nhk-tokyo-fm") { %> checked <% } %> >NHK FM
+	<br>
+        <input type="radio" name="station" value="rn1" <% if (def_station === "rn1") { %> checked <% } %> >Radio NIKKEI第1
+	<br>
+	<input type="radio" name="station" value="chokuradi" <% if (def_station === "chokuradi") { %> checked <% } %> >チョクラジ
+	<br>
+	<input type="radio" name="station" value="iidafm" <% if (def_station === "iidafm") { %> checked <% } %> >IIDA-FM
+	<br>
+        <input type="radio" name="station" value="radioniseko" <% if (def_station === "radioniseko") { %> checked <% } %> >ラジオニセコ
+	<br>
+
+      </td></tr> 
+    </table>
+    <br>
+  </p>
+
+  <p>
+    <form oninput="op.value=volume.value">
+    <table width="335" border="0">
+    <tr><td colspan="2">
+      <label for="rangeVaue"><H2 style="margin:0;">　Volume</H2></lable>
+     </td></tr>
+     <td width="30" align="right">
+      <output name="op"><%= def_volume %></output>
+     </td><td>
+      <input type="range" class="slider" name="volume" min="20" max="100" value="<%= def_volume %>" />
+     </td>
+
+        </tr>
+    </table>
+  </p>
+
+    <script language="javascript" type="text/javascript">
+
+      // イベントハンドラー
+      var jsonData = [{ id : 'Station', value: 'nhkr1' }
+                     ,{ id : 'Volume' , value: 80   }
+                     ];
+      const URL='/panel';
+      const station_evt = document.getElementsByName('station');
+      const volume_evt  = document.getElementsByName('volume');
+
+        station_evt.forEach( 
+                r_s => r_s.addEventListener("change",
+                    e_s => {
+			jsonData[0].value = e_s.target.value;
+			fetch(URL+'/post', {
+				method: 'POST',
+				headers: {
+				   'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(
+				   jsonData[0] 
+				)
+			});	
+			console.log("Station:" + jsonData[0].value);
+		    }
+                )
+        );
+        volume_evt.forEach(
+		  r_v => r_v.addEventListener("change",
+                    e_v => {
+			jsonData[1].value = e_v.target.value;
+			fetch(URL+'/post', {
+				method: 'POST',
+				headers: {
+				   'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(
+				   jsonData[1] 
+				)
+			});	
+			console.log("Volume:" + jsonData[1].value);
+		    }
+                )
+        );
+
+    </script>
+</body>
+</html>

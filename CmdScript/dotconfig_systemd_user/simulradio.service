@@ -1,0 +1,15 @@
+[Unit]
+Description=Simul Radio Service
+ConditionPathExists=/opt/simulradio/bin
+After=default.target
+
+[Service]
+ExecStart=/opt/simulradio/bin/StartUp.sh
+ExecStop=
+Type=forking
+TimeoutStartSec=300
+
+[Install]
+#WantedBy=default.target sockets.target
+WantedBy=default.target
+
