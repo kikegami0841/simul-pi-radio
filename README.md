@@ -125,5 +125,5 @@ sh ./install.sh
 - その後、カスタマイズの手順でラジオ局をWebサーバーに登録する
 ```
  cd /opt/simulradio/bin
- ./SimulRadio_StationList.py
+ sh simulradio_setup.sh
 ```
