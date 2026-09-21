@@ -1,4 +1,4 @@
-﻿# Simulradio (サイマルラジオ受信機)
+﻿# Simul Pi-Radio (サイマルラジオ受信機)
 
 ２つの受信エンジンを使ったラジオ受信機の実装例(Sample)です  
 | ツール | 対応サービス |
@@ -7,7 +7,7 @@
 | rec_wss.py | [JCBA](https://www.jcbasimul.com/), [FM++](https://fmplapla.com/) |
 
 - この2つで、日本中のラジオ局のサイマル放送を網羅している(と思います)  
-- これらの好きなものを node.js を使ってWebServerを構築して、スマホやPCを使って選曲、音量調整できる物
+- これらの好きなものを node.js[express.js] を使ってWebServerを構築して、スマホやPCを使って選曲、音量調整できる物
 を作ってみました。  
 - raspberry pi zero 2 W を使って、DAC+パワーアンプでスピーカーから鳴らします  
 - システムはユーザー領域で動いています
